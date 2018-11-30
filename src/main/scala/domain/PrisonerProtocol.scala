@@ -4,19 +4,37 @@ import akka.actor.ActorRef
 
 
 object PrisonerProtocol {
-  trait Message
+  // messages to be received by your actor
 
-  case class Captured(prison: ActorRef) extends Message
-  case class CheckIn(name: String) extends Message
-  case class Imprisoned(message: String) extends Message
-  case class KickedOut(reason: String) extends Message
+  //server discovered you and ask for a check in
+  case class Captured(prison: ActorRef)
 
-  case class Question(accomplice: String) extends Message
+  //confirmation of a successful check in
+  case class Imprisoned(message: String)
+
+  //Prison set you free, no more questioning for you
+  case class KickedOut(reason: String)
+
+  //Questioning started, you're facing accomplice
+  case class Question(accomplice: String)
+
+  //the accomplice answer to the last questioning
+  case class QuestionResult(accomplice: String, decision: PrisonerDecision)
+
+
+
+  // messages to be send by your actor
+
+  //join the prison und the given name
+  case class CheckIn(name: String)
+
+  //answer to the last questioning
+  case class PrisonerResponse(decision: PrisonerDecision)
+
+  ////////
   sealed trait PrisonerDecision
   object PrisonerDecision {
     case object Accuse extends PrisonerDecision     //Accuse / Cooperate
     case object Refuse extends PrisonerDecision     //Stay Silent / Defect
   }
-  case class PrisonerResponse(decision: PrisonerDecision) extends Message
-  case class QuestionResult(accomplice: String, decision: PrisonerDecision) extends Message
 }
